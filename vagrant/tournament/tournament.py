@@ -13,17 +13,50 @@ def connect():
 
 def deleteMatches():
     """Remove all the match records from the database."""
+    QUERY = "DELETE FROM MATCHES;"
 
+    conn = connect()
+    c = conn.cursor()
+    c.execute(QUERY)
+    conn.commit()
+    conn.close()
+    
 
 def deletePlayers():
     """Remove all the player records from the database."""
+    QUERY = "DELETE FROM PLAYERS;"
+
+    conn = connect()
+    c = conn.cursor()
+    c.execute(QUERY)
+    conn.commit()
+    conn.close()
 
 
 def countPlayers():
     """Returns the number of players currently registered."""
+    QUERY = "SELECT COUNT(ID) FROM PLAYERS;"
+
+    conn = connect()
+    c = conn.cursor()
+    c.execute(QUERY)
+
+    num = c.fetchall()
+    
+    print num
+
+    if num == "[(0L,)]":
+        num = 0
+
+    print num
+    
+    conn.commit()
+    conn.close()
+
+    return 0
 
 
-def registerPlayer(name):
+def registerPlayer(num, name):
     """Adds a player to the tournament database.
   
     The database assigns a unique serial id number for the player.  (This
@@ -32,6 +65,14 @@ def registerPlayer(name):
     Args:
       name: the player's full name (need not be unique).
     """
+
+    QUERY = "INSERT INTO PLAYERS VALUES (" + str(num) + ", '" + name + "', 0, 0, 0);"
+
+    conn = connect()
+    c = conn.cursor()
+    c.execute(QUERY)
+    conn.commit()
+    conn.close()
 
 
 def playerStandings():
@@ -48,6 +89,15 @@ def playerStandings():
         matches: the number of matches the player has played
     """
 
+    QUERY = "SELECT * FROM PLAYER_STANDINGS;"
+
+    conn = connect()
+    c = conn.cursor()
+    c.execute(QUERY)
+    standings = c.fetchall()
+    conn.commit()
+    conn.close()
+    return standings
 
 def reportMatch(winner, loser):
     """Records the outcome of a single match between two players.
