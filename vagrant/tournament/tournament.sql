@@ -6,6 +6,10 @@
 -- You can write comments in this file by starting them with two dashes, like
 -- these lines here.
 
+-- Drop database if it exists already
+DROP DATABASE IF EXISTS tournament;
+
+
 -- Create database
 CREATE DATABASE tournament;
 
@@ -15,7 +19,7 @@ CREATE DATABASE tournament;
 -- Create PLAYERS table
 -- Columns: ID (int), NAME (varchar), WINS (int), TOTAL (int), POINTS (int), Primary Key (ID)
 CREATE TABLE PLAYERS(
-  ID INT                NOT NULL,
+  ID SERIAL             NOT NULL,
   NAME VARCHAR(20)      NOT NULL,
   WINS INT              NOT NULL,
   TOTAL INT             NOT NULL,
@@ -26,7 +30,7 @@ CREATE TABLE PLAYERS(
 -- Create MATCHES table
 -- Columns: ID (int), WINNER (varchar), LOSER (varchar), Primary Key (ID)
 CREATE TABLE MATCHES(
-  ID INT                NOT NULL,
+  ID SERIAL             NOT NULL,
   WINNER VARCHAR(20)    NOT NULL,
   LOSER VARCHAR(20)     NOT NULL,
   Primary Key (ID)

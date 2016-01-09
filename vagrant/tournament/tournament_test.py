@@ -30,7 +30,7 @@ def testCount():
 def testRegister():
     deleteMatches()
     deletePlayers()
-    registerPlayer(1, "Chandra Nalaar")
+    registerPlayer("Chandra Nalaar")
     #c = countPlayers()
     c = 1
     if c != 1:
@@ -42,10 +42,10 @@ def testRegister():
 def testRegisterCountDelete():
     deleteMatches()
     deletePlayers()
-    registerPlayer(1, "Markov Chaney")
-    registerPlayer(2, "Joe Malik")
-    registerPlayer(3, "Mao Tsu-hsi")
-    registerPlayer(4, "Atlanta Hope")    
+    registerPlayer("Markov Chaney")
+    registerPlayer("Joe Malik")
+    registerPlayer("Mao Tsu-hsi")
+    registerPlayer("Atlanta Hope")    
     #c = countPlayers()
     c = 4
     if c != 4:
@@ -62,8 +62,8 @@ def testRegisterCountDelete():
 def testStandingsBeforeMatches():
     deleteMatches()
     deletePlayers()
-    registerPlayer(1, "Melpomene Murray")
-    registerPlayer(2, "Randy Schwartz")
+    registerPlayer("Melpomene Murray")
+    registerPlayer("Randy Schwartz")
     standings = playerStandings()
     if len(standings) < 2:
         raise ValueError("Players should appear in playerStandings even before "

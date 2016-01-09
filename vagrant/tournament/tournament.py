@@ -56,7 +56,7 @@ def countPlayers():
     return 0
 
 
-def registerPlayer(num, name):
+def registerPlayer(name):
     """Adds a player to the tournament database.
   
     The database assigns a unique serial id number for the player.  (This
@@ -66,7 +66,7 @@ def registerPlayer(num, name):
       name: the player's full name (need not be unique).
     """
 
-    QUERY = "INSERT INTO PLAYERS VALUES (" + str(num) + ", '" + name + "', 0, 0, 0);"
+    QUERY = "INSERT INTO PLAYERS(NAME,WINS,TOTAL,POINTS) VALUES ('" + name + "', 0, 0, 0);"
 
     conn = connect()
     c = conn.cursor()
