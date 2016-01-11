@@ -41,19 +41,12 @@ def countPlayers():
     c = conn.cursor()
     c.execute(QUERY)
 
-    num = c.fetchall()
-    
-    print num
-
-    if num == "[(0L,)]":
-        num = 0
-
-    print num
+    num = c.fetchone()
     
     conn.commit()
     conn.close()
 
-    return 0
+    return num[0]
 
 
 def registerPlayer(name):
@@ -99,6 +92,7 @@ def playerStandings():
     conn.close()
     return standings
 
+
 def reportMatch(winner, loser):
     """Records the outcome of a single match between two players.
 
@@ -106,6 +100,24 @@ def reportMatch(winner, loser):
       winner:  the id number of the player who won
       loser:  the id number of the player who lost
     """
+
+    QUERY_WIN = ("UPDATE PLAYERS SET WINS = WINS + 1, TOTAL = TOTAL + 1, POINTS = POINTS + 1 WHERE ID = (%i);", (winner))
+    QUERY_LOSE = ("UPDATE PLAYERS SET TOTAL = TOTAL + 1 WHERE ID = (%i);", (loser))
+
+    conn = connect()
+    c = conn.cursor()
+
+    # Retreive name of winner and loser
+    c.execute(("SELECT NAME FROM PLAYERS WHERE ID = (?);", (winner)))
+    winner_name = c.fetchone()
+    c.execute("SELECT NAME FROM PLAYERS WHERE ID = (%i);", (loser))
+    loser_name = c.fetchone()
+    
+    c.execute("INSERT INTO MATCHES VALUES('" + winner_name + "', '" + loser_name + "');")
+    c.execute(QUERY_WIN)
+    c.execute(QUERY_LOSE)
+    conn.commit()
+    conn.close()    
  
  
 def swissPairings():
