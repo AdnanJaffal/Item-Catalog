@@ -7,7 +7,7 @@
 * [Vagrant](https://www.vagrantup.com/downloads.html)
 
 ## Quick Start
-* [Download files](https://github.com/AdnanJaffal/top-movies/archive/master.zip)
+* [Download files](https://github.com/AdnanJaffal/Tournament-Database/archive/master.zip)
 * Use a command prompt and browse to the /vagrant folder.
 * Run [vagrant up] and [vagrant ssh] to connect to the vagrant virtual machine.
 * Run [cd /vagrant/tournament] to browse to the folder containing the python and sql code.
