@@ -86,7 +86,7 @@ def testReportMatches():
     deleteMatches()
     deletePlayers()
     registerPlayer("Bruno Walton")
-    registerPlayer("Boots ONeal")
+    registerPlayer("Boots O'Neal")
     registerPlayer("Cathy Burton")
     registerPlayer("Diane Grant")
     standings = playerStandings()
@@ -103,7 +103,7 @@ def testReportMatches():
             raise ValueError("Each match loser should have zero wins recorded.")
     print "7. After a match, players have updated standings."
 
-"""
+
 def testPairings():
     deleteMatches()
     deletePlayers()
@@ -126,7 +126,7 @@ def testPairings():
         raise ValueError(
             "After one match, players with one win should be paired.")
     print "8. After one match, players with one win are paired."
-"""
+
 
 if __name__ == '__main__':
     testDeleteMatches()
@@ -136,5 +136,5 @@ if __name__ == '__main__':
     testRegisterCountDelete()
     testStandingsBeforeMatches()
     testReportMatches()
-    #testPairings()
+    testPairings()
     print "Success!  All tests pass!"
