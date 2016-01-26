@@ -6,9 +6,14 @@
 import psycopg2
 
 
-def connect():
+def connect(database_name = "tournament"):
     """Connect to the PostgreSQL database.  Returns a database connection."""
-    return psycopg2.connect("dbname=tournament")
+    try:
+        db = psycopg2.connect("dbname={}".format(database_name))
+        cursor = db.cursor()
+        return db, cursor
+    except:
+        print("Could not connect to database. Please try again.")
 
 
 def deleteMatches():
@@ -18,8 +23,7 @@ def deleteMatches():
     QUERY = "DELETE FROM MATCHES;"
 
     #Connect to SQL database
-    conn = connect()
-    c = conn.cursor()
+    conn, c = connect()
 
     #Execute query
     c.execute(QUERY)
@@ -36,8 +40,7 @@ def deletePlayers():
     QUERY = "DELETE FROM PLAYERS;"
 
     #Connect to SQL database
-    conn = connect()
-    c = conn.cursor()
+    conn, c = connect()
 
     #Execute query
     c.execute(QUERY)
@@ -51,11 +54,10 @@ def countPlayers():
     """Returns the number of players currently registered."""
 
     #SQL query to count total players in PLAYERS table
-    QUERY = "SELECT COUNT(ID) FROM PLAYERS;"
+    QUERY = "SELECT COUNT(P_ID) FROM PLAYERS;"
 
     #Connect to SQL database
-    conn = connect()
-    c = conn.cursor()
+    conn, c = connect()
 
     #Execute SQL query
     c.execute(QUERY)
@@ -82,12 +84,11 @@ def registerPlayer(name):
     """
 
     #SQL query to insert new player in PLAYERS table
-    QUERY = "INSERT INTO PLAYERS(NAME,WINS,TOTAL,POINTS) VALUES (%s, 0, 0, 0);"
+    QUERY = "INSERT INTO PLAYERS(NAME) VALUES (%s);"
     DATA = ("" + name + "",)
 
     #Connect to SQL database
-    conn = connect()
-    c = conn.cursor()
+    conn, c = connect()
 
     #Execute SQL query
     c.execute(QUERY, DATA)
@@ -116,8 +117,7 @@ def playerStandings():
     QUERY = "SELECT * FROM PLAYER_STANDINGS;"
 
     #Connect to SQL database
-    conn = connect()
-    c = conn.cursor()
+    conn, c = connect()
 
     #Retreive player data from PLAYER_STANDINGS view
     c.execute(QUERY)
@@ -140,26 +140,11 @@ def reportMatch(winner, loser):
     """
 
     #Connect to SQL database
-    conn = connect()
-    c = conn.cursor()
-
-    # Retreive name of winner and loser
-    c.execute("SELECT NAME FROM PLAYERS WHERE ID = %s;", (winner,))
-    winner_name = c.fetchone()
-    c.execute("SELECT NAME FROM PLAYERS WHERE ID = %s;", (loser,))
-    loser_name = c.fetchone()
+    conn, c = connect()
 
     #Insert match into MATCHES table
-    c.execute('INSERT INTO MATCHES(WINNER,WIN_ID,LOSER,LOSE_ID) VALUES(%s, %s,'
-              ' %s, %s);', (str(winner_name[0]), winner, str(loser_name[0]),
-                            loser))
-
-    #Update winner with +1 point and winer + loser with +1 total matches
-    c.execute("UPDATE PLAYERS SET WINS = WINS + 1, TOTAL = TOTAL + 1, POINTS ="
-              " POINTS + 1 WHERE ID = %s AND NAME = %s;", (str(winner),
-                                                        str(winner_name[0])))
-    c.execute("UPDATE PLAYERS SET TOTAL = TOTAL + 1 WHERE ID = %s AND NAME = "
-              "%s;", (str(loser), str(loser_name[0])))
+    c.execute('INSERT INTO MATCHES(WIN_ID,LOSE_ID) VALUES(%s, %s);', (winner,
+              loser))
 
     #Close SQL connection
     conn.commit()
@@ -183,14 +168,13 @@ def swissPairings():
     """
 
     #Connect to SQL database
-    conn = connect()
-    c = conn.cursor()
+    conn, c = connect()
 
     #Count number of players
     num = countPlayers()
     
     #Get current standings
-    c.execute("SELECT ID,NAME FROM PLAYER_STANDINGS;")
+    c.execute("SELECT P_ID,NAME FROM PLAYER_STANDINGS;")
     standings = c.fetchall()
 
     #Close sql connection

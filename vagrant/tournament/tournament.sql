@@ -17,29 +17,26 @@ CREATE DATABASE tournament;
 
 
 -- Create PLAYERS table
--- Columns: ID (int), NAME (varchar), WINS (int), TOTAL (int), POINTS (int), Primary Key (ID)
+-- Columns: ID (int), NAME (varchar), Primary Key (ID)
 CREATE TABLE PLAYERS(
-  ID SERIAL             NOT NULL,
+  P_ID SERIAL             NOT NULL,
   NAME VARCHAR(20)      NOT NULL,
-  WINS INT              NOT NULL,
-  TOTAL INT             NOT NULL,
-  POINTS INT            NOT NULL,
-  Primary Key (ID)
+  Primary Key (P_ID)
 );
 
 -- Create MATCHES table
--- Columns: ID (int), WINNER (varchar), WIN_ID (int), LOSER (varchar), LOSE_ID (int), Primary Key (ID)
+-- Columns: ID (int), WIN_ID (int), LOSE_ID (int), Primary Key (ID), Foreign Key (WIN_ID, LOSE_ID)
 CREATE TABLE MATCHES(
-  ID SERIAL             NOT NULL,
-  WINNER VARCHAR(20)    NOT NULL,
+  M_ID SERIAL             NOT NULL,
   WIN_ID INT		NOT NULL,
-  LOSER VARCHAR(20)     NOT NULL,
   LOSE_ID INT		NOT NULL,
-  Primary Key (ID)
+  Primary Key (M_ID),
+  Foreign Key (WIN_ID) References PLAYERS(P_ID),
+  Foreign Key (LOSE_ID) References PLAYERS(P_ID)
 );
 
 
 -- Create PLAYER_STANDINGS view
 -- Columns: ID, NAME, WINS, TOTAL
 -- Sorted by WINS
-CREATE VIEW PLAYER_STANDINGS AS SELECT ID,NAME,WINS,TOTAL FROM PLAYERS ORDER BY WINS DESC;
+CREATE VIEW PLAYER_STANDINGS AS SELECT P_ID,NAME,(SELECT COUNT(*) FROM MATCHES WHERE MATCHES.WIN_ID = PLAYERS.P_ID) AS WINS, (SELECT COUNT(*) FROM MATCHES WHERE MATCHES.WIN_ID = PLAYERS.P_ID OR MATCHES.LOSE_ID = PLAYERS.P_ID) AS TOTAL FROM PLAYERS ORDER BY WINS DESC;
