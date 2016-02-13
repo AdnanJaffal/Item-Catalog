@@ -1,39 +1,46 @@
+import os
 import sys
-
-from sqlalchemy import Column, ForeignKey, Integer, String, Date, Float
-
+from sqlalchemy import Column, ForeignKey, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
-
 from sqlalchemy.orm import relationship
-
 from sqlalchemy import create_engine
 
 Base = declarative_base()
 
-class Shelter(Base):
-    __tablename__ = 'shelter'
 
-    name = Column(String(80), nullable = False)
-    address = Column(String(100), nullable = False)
-    city = Column(String(50), nullable = False)
-    state = Column(String(50), nullable = False)
-    zip_code = Column(Integer, nullable = False)
-    website = Column(String(250))
-    id = Column(Integer, primary_key = True)
+class Restaurant(Base):
+    __tablename__ = 'restaurant'
 
-class Puppy(Base):
-    __tablename__ = 'puppy'
+    id = Column(Integer, primary_key=True)
+    name = Column(String(250), nullable=False)
 
-    name = Column(String(80), nullable = False)
-    id = Column(Integer, primary_key = True)
-    date_birth = Column(Date)
-    gender = Column(String(10), nullable = False)
-    weight = Column(Float, nullable = False)
-    shelter_id = Column(Integer, ForeignKey('shelter.id'))
 
-    shelter = relationship(Shelter)
-    
+class MenuItem(Base):
+    __tablename__ = 'menu_item'
 
-engine = create_engine('sqlite:///puppies.db')
+    name = Column(String(80), nullable=False)
+    id = Column(Integer, primary_key=True)
+    description = Column(String(250))
+    price = Column(String(8))
+    course = Column(String(250))
+    restaurant_id = Column(Integer, ForeignKey('restaurant.id'))
+    restaurant = relationship(Restaurant)
+
+# We added this serialize function to be able to send JSON objects in a
+# serializable format
+    @property
+    def serialize(self):
+
+        return {
+            'name': self.name,
+            'description': self.description,
+            'id': self.id,
+            'price': self.price,
+            'course': self.course,
+        }
+
+
+engine = create_engine('sqlite:///restaurantmenu.db')
+
 
 Base.metadata.create_all(engine)
