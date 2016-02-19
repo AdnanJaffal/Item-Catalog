@@ -1,0 +1,29 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Item Catalog</title>
+<!--<link rel=stylesheet type=text/css href="{{ url_for('static', filename='styles.css') }}">-->
+<link rel=stylesheet type=text/css href="../static/styles.css">
+</head>
+
+<body>
+<section class="middle" id="middle-area">
+<h1 class="middle" id="middle-header">Login</h1>
+  <form id="login-form" method="post" action="{{ url_for('catalogMain') }}">
+    <input type="text" id="username" name="username" placeholder="Username">
+    <input type="text" id="password" name="password" placeholder="Password">
+    <input type="submit" value="Login">
+  </form>
+</section>
+<section class="side" id="side-area">
+  <h1><a href="{{ url_for('catalogMain') }}" class="item-catalog"><em>Item Catalog</em></a></h1>
+  <h3 class="side" id="category-header">Categories</h3>
+  <ul class="side" id="categories">
+    {% for c in categories %}
+      <li> <a href="{{ url_for('categoryItems', category_name=c.name) }}"> {{ c.name }} </a></li>
+    {% endfor %}
+  </ul>
+</section>
+</body>
+</html>

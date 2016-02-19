@@ -1,0 +1,34 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Item Catalog</title>
+<!--<link rel=stylesheet type=text/css href="{{ url_for('static', filename='styles.css') }}">-->
+<link rel=stylesheet type=text/css href="../static/styles.css">
+</head>
+
+<body>
+<section class="middle" id="middle-area">
+  <h1 class="middle" id="middle-header">{{category.name}} Items</h1>
+  <ul class="middle" id="items">
+    {% for i in items %}
+      <li> <a href="{{ url_for('loadItem', item_id=i.id, item_name=i.name, category_id=i.category_id) }}"> {{ i.name }}, {{i.id}}, {{i.category_id}} </a></li>
+    {% endfor %}
+  </ul>
+</section>
+<section class="side" id="side-area">
+  <h1><a href="{{ url_for('catalogMain') }}" class="item-catalog"><em>Item Catalog</em></a></h1>
+  <h3 class="side" id="category-header">Categories</h3>
+  <ul class="side" id="categories">
+    {% for c in categories %}
+      <li> <a href="{{ url_for('categoryItems', category_name=c.name) }}"> {{ c.name }} </a></li>
+    {% endfor %}
+  </ul>
+  {% if user %}
+    <p class="side" id="login">You are {{ user.username }}</p>
+  {% else %}
+    <a href="{{ url_for('login') }}" class="side" id="login">Login</a>
+  {% endif %}
+</section>
+</body>
+</html>

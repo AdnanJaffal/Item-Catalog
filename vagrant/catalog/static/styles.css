@@ -1,19 +1,84 @@
-body            { font-family: sans-serif; background-image: url('img3.jpg'); background-color: #333333}
-h1, h2, h3, h4       { color: #FFFFFF; }
-h1, h2          { font-family: 'Georgia', serif; margin: 0; }
-h1              { border-bottom: 2px solid #eee; }
-h2              { font-size: 1.2em; }
+html            {min-height:100%;max-width:97%;position:relative;}
 
-p, dd, dt               { color: #CCCCCC;}
+body            {height:100%;font-family: times-new-roman; background-color: #359DA6;}
 
-a {text-decoration: none; color:#FFFFCC; font-size: .75em;}
+p, dd, dt {
+	border: thin solid #000000;
+	padding:10px;
+	color: #98A67B;
+	position: absolute;
+	left: 25px;
+	width: calc(100% - 75px);
+}
+a               {text-decoration:none; color:#98A67B;}
 
-.pane {position:absolute; left: 25%; border: 2px solid;
-    border-radius: 25px; padding: 5px; margin: 5px; border-color: #999999; background-color: #333333 }
-.header         {left:50%; text-align: center;}
-.name {width:50%;display: inline-block; float: left;}
-.description {}
-.price {text-align: right; width:50%; float: right; }
-.editdeletepane{}
 
 .flash          { background: #cee5F5; }
+.item-catalog {
+	border-bottom-style:double;
+	border-bottom-width:thick;
+	font-family:Baskerville, "Palatino Linotype", Palatino, "Century Schoolbook L", "Times New Roman", serif;
+	color:#FFFFFF;
+	font-size:30px;
+	margin-top:0px;
+	padding-left:10px;
+	padding-bottom:10px;
+}
+#side-area {
+	background-color: #8f0005;
+	width: 200px;
+	height:inherit;
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+#category-header {
+	font-family:"Gill Sans", "Gill Sans MT", "Myriad Pro", "DejaVu Sans Condensed", Helvetica, Arial, sans-serif;
+	font-size:24px;
+	text-decoration:underline;
+	margin-left:36px;
+	margin-bottom:0px;
+}
+#categories {
+	font-family:"Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", "DejaVu Sans", Verdana, sans-serif;
+	font-size:18px;
+	color:#98A67B;
+	height: calc(100% - 200px);
+	margin-left:10px;
+	margin-top:10px;
+	overflow:scroll;
+	overflow-style:marquee-block;
+}
+#login {
+	font: Baskerville, "Palatino Linotype", Palatino, "Century Schoolbook L", "Times New Roman", serif;
+	font-size: 24px;
+	color: #FFFFFF;
+	border: 1px solid #08109C;
+	background-color: #08109C;
+	padding: 5px;
+	position: relative;
+	left: 68px;
+}
+#middle-area {
+	background-color: #8f0005;
+	position: absolute;
+	left: 250px;
+	right: 0;
+	top: 50px;
+	height: calc(100% - 100px);	
+}
+#middle-header {
+	font-family:"Gill Sans", "Gill Sans MT", "Myriad Pro", "DejaVu Sans Condensed", Helvetica, Arial, sans-serif;
+	border-bottom:dotted;
+	border-bottom-width:thick;
+	margin-top:5px;
+	padding-left:10px;
+}
+#items {
+	font-family:"Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", "DejaVu Sans", Verdana, sans-serif;
+	font-size:18px;
+	color:#98A67B;
+}
+#login-form {
+	margin:10px;
+}

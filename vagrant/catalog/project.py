@@ -1,80 +1,123 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
+from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from database_setup import Base, Restaurant, MenuItem
+from database_setup import Base, Category, Item, User
 
 app = Flask(__name__)
 
-engine = create_engine('sqlite:///restaurantmenu.db')
+engine = create_engine('sqlite:///itemcatalog.db')
 Base.metadata.bind = engine
 
 DBSession = sessionmaker(bind=engine)
-session = DBSession()
+cursor = DBSession()
 
-@app.route('/restaurants/<int:restaurant_id>/menu/JSON')
-def restaurantMenuJSON(restaurant_id):
-    restaurant = session.query(Restaurant).filter_by(id=restaurant_id).one()
-    items = session.query(MenuItem).filter_by(
-        restaurant_id=restaurant_id).all()
-    return jsonify(MenuItems=[i.serialize for i in items])
+# OAuth code
+def current_user():
+    if 'id' in session:
+        uid = session['id']
+        return cursor.query(User).filter_by(id=uid).one()
+    return None
 
-@app.route('/restaurants/<int:restaurant_id>/menu/<int:menu_id>/JSON')
-def menuItemJSON(restaurant_id, menu_id):
-    item = session.query(MenuItem).filter_by(id=menu_id).one()
-    return jsonify(MenuItem=item.serialize)
+@app.route('/categories/<int:category_id>/item/JSON')
+def categoryJSON(category_id):
+    category = cursor.query(Category).filter_by(id=category_id).one()
+    items = cursor.query(Item).filter_by(
+        category_id=category_id).all()
+    return jsonify(Items=[i.serialize for i in items])
 
-@app.route('/')
-@app.route('/restaurants/<int:restaurant_id>/menu')
-def restaurantMenu(restaurant_id):
-    restaurant = session.query(Restaurant).filter_by(id=restaurant_id).one()
-    items = session.query(MenuItem).filter_by(restaurant_id=restaurant.id)
-    return render_template('menu.html', restaurant=restaurant, items=items)
+@app.route('/categories/<int:category_id>/item/<int:item_id>/JSON')
+def itemJSON(category_id, item_id):
+    item = cursor.query(Item).filter_by(id=item_id).one()
+    return jsonify(Item=item.serialize)
 
-# Task 1: Create route for newMenuItem function here
-
-
-@app.route('/restaurant/<int:restaurant_id>/new/', methods=['GET', 'POST'])
-def newMenuItem(restaurant_id):
+@app.route('/', methods=['GET', 'POST'])
+@app.route('/catalog', methods=['GET', 'POST'])
+def catalogMain():
     if request.method == 'POST':
-        newItem = MenuItem(
-            name=request.form['name'], restaurant_id=restaurant_id)
-        session.add(newItem)
-        session.commit()
-        flash("New menu item created!")
-        return redirect(url_for('restaurantMenu', restaurant_id=restaurant_id))
+        username = request.form['username']
+        user = cursor.query(User).filter_by(username=username).first()
+        print user
+        if user:
+            session['id'] = user.id
     else:
-        return render_template('newmenuitem.html', restaurant_id=restaurant_id)
+        user = current_user()
 
-# Task 2: Create route for editMenuItem function here
+    categories = cursor.query(Category).all()
+    items = cursor.query(Item).order_by(Item.id).limit(10)
+    return render_template('catalog.html', items=items, categories=categories, user=user)
+
+@app.route('/catalog/<string:category_name>')
+def categoryItems(category_name):
+    categories = cursor.query(Category).all()
+    category = cursor.query(Category).filter_by(name=category_name).first()
+    print category
+    items = cursor.query(Item).filter_by(category_id=category.id)
+    user = current_user()
+    return render_template('category.html', category=category, items=items, categories=categories, user=user)
+
+@app.route('/catalog/<int:category_id>/<string:item_name>')
+def loadItem(item_id, item_name, category_id):
+    print category_id
+    print item_id
+    print item_name
+    categories = cursor.query(Category).all()
+    print categories
+    items = cursor.query(Item).filter_by(id=item_id)
+    print items
+    user = current_user()
+    print user
+    return render_template('item.html', items=items, categories=categories, user=user)
+
+@app.route('/catalog/login')
+def login():
+    categories = cursor.query(Category).all()
+    return render_template('login.html', categories=categories)
+
+# Task 1: Create route for newItem function here
 
 
-@app.route('/restaurants/<int:restaurant_id>/<int:menu_id>/edit',
+@app.route('/category/<int:category_id>/new/', methods=['GET', 'POST'])
+def newItem(category_id):
+    if request.method == 'POST':
+        newItem = Item(
+            name=request.form['name'], category_id=category_id)
+        cursor.add(newItem)
+        cursor.commit()
+        flash("New item item created!")
+        return redirect(url_for('categoryMenu', category_id=category_id))
+    else:
+        return render_template('newmenuitem.html', category_id=category_id)
+
+# Task 2: Create route for editItem function here
+
+
+@app.route('/categories/<int:category_id>/<int:item_id>/edit',
            methods=['GET', 'POST'])
-def editMenuItem(restaurant_id, menu_id):
-    editedItem = session.query(MenuItem).filter_by(id=menu_id).one()
+def editItem(category_id, item_id):
+    editedItem = cursor.query(Item).filter_by(id=item_id).one()
     if request.method == 'POST':
         if request.form['name']:
             editedItem.name = request.form['name']
-        session.add(editedItem)
-        session.commit()
+        cursor.add(editedItem)
+        cursor.commit()
         flash("Menu item edited!")
-        return redirect(url_for('restaurantMenu', restaurant_id=restaurant_id))
+        return redirect(url_for('categoryMenu', category_id=category_id))
     else:
         return render_template(
-            'editmenuitem.html', restaurant_id=restaurant_id, menu_id=menu_id, item=editedItem)
+            'editmenuitem.html', category_id=category_id, item_id=item_id, item=editedItem)
 
-# Task 3: Create a route for deleteMenuItem function here
+# Task 3: Create a route for deleteItem function here
 
 
-@app.route('/restaurants/<int:restaurant_id>/<int:menu_id>/delete',
+@app.route('/categories/<int:category_id>/<int:item_id>/delete',
            methods=['GET', 'POST'])
-def deleteMenuItem(restaurant_id, menu_id):
-    itemToDelete = session.query(MenuItem).filter_by(id=menu_id).one()
+def deleteItem(category_id, item_id):
+    itemToDelete = cursor.query(Item).filter_by(id=item_id).one()
     if request.method == 'POST':
-        session.delete(itemToDelete)
-        session.commit()
+        cursor.delete(itemToDelete)
+        cursor.commit()
         flash("Menu item deleted!")
-        return redirect(url_for('restaurantMenu', restaurant_id=restaurant_id))
+        return redirect(url_for('categoryMenu', category_id=category_id))
     else:
         return render_template('deleteconfirmation.html', item=itemToDelete)
 
