@@ -10,6 +10,15 @@ p, dd, dt {
 	left: 25px;
 	width: calc(100% - 75px);
 }
+div {
+	font-family:Gotham, "Helvetica Neue", Helvetica, Arial, sans-serif;
+	color:#ffffff;
+	font-size:24px;
+	font-style:italic;
+	font-variant:small-caps;
+	font-weight:900;
+	margin-left:25px;
+}
 a               {text-decoration:none; color:#98A67B;}
 
 
@@ -43,11 +52,22 @@ a               {text-decoration:none; color:#98A67B;}
 	font-family:"Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", "DejaVu Sans", Verdana, sans-serif;
 	font-size:18px;
 	color:#98A67B;
-	height: calc(100% - 200px);
+	height: calc(100% - 300px);
 	margin-left:10px;
 	margin-top:10px;
 	overflow:scroll;
 	overflow-style:marquee-block;
+}
+#new-category {
+	font: Baskerville, "Palatino Linotype", Palatino, "Century Schoolbook L", "Times New Roman", serif;
+	font-size: 24px;
+	color: #FFFFFF;
+	border: 1px solid #08109C;
+	background-color: #08109C;
+	padding: 5px;
+	position: relative;
+	left: 25px;
+	top: 50px;
 }
 #login {
 	font: Baskerville, "Palatino Linotype", Palatino, "Century Schoolbook L", "Times New Roman", serif;
@@ -57,7 +77,8 @@ a               {text-decoration:none; color:#98A67B;}
 	background-color: #08109C;
 	padding: 5px;
 	position: relative;
-	left: 68px;
+	left: 60px;
+	top: 75px;
 }
 #middle-area {
 	background-color: #8f0005;
@@ -78,6 +99,60 @@ a               {text-decoration:none; color:#98A67B;}
 	font-family:"Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", "DejaVu Sans", Verdana, sans-serif;
 	font-size:18px;
 	color:#98A67B;
+}
+#name {
+	position: absolute;
+	left: 25px;
+}
+#description {
+	width: calc(100% - 60px);
+	height:100px;
+	position: absolute;
+	left: 25px;
+	top: 100px;
+	resize:vertical;
+}
+#submit {
+	font: Baskerville, "Palatino Linotype", Palatino, "Century Schoolbook L", "Times New Roman", serif;
+	font-size: 24px;
+	color: #FFFFFF;
+	border: 1px solid #08109C;
+	background-color: #08109C;
+	padding: 5px;
+	position: absolute;
+	left: 25px;
+	top: calc(100% - 65px);
+}
+#edit-button {
+	font: Baskerville, "Palatino Linotype", Palatino, "Century Schoolbook L", "Times New Roman", serif;
+	font-size: 24px;
+	color: #FFFFFF;
+	border: 1px solid #08109C;
+	background-color: #08109C;
+	padding: 5px;
+	position: absolute;
+	left: 15px;
+	top: calc(100% - 52px);
+}
+#delete-button {
+	font: Baskerville, "Palatino Linotype", Palatino, "Century Schoolbook L", "Times New Roman", serif;
+	font-size: 24px;
+	color: #FFFFFF;
+	border: 1px solid #08109C;
+	background-color: #08109C;
+	padding: 5px;
+	position: absolute;
+	left: 80px;
+	top: calc(100% - 52px);
+}
+#delete-confirmation {
+	font: Baskerville, "Palatino Linotype", Palatino, "Century Schoolbook L", "Times New Roman", serif;
+	font-size: 24px;
+	color: #FFFFFF;
+	border: 1px solid #08109C;
+	background-color: #08109C;
+	padding: 5px;
+	margin:25px;
 }
 #login-form {
 	margin:10px;

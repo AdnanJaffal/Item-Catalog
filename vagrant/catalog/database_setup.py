@@ -13,6 +13,7 @@ class User(Base):
 
     id = Column(Integer, primary_key=True)
     username = Column(String(40), unique=True)
+    password = Column(String(36), nullable=False)
 
 class Category(Base):
     __tablename__ = 'category'

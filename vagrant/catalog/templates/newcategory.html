@@ -9,12 +9,11 @@
 
 <body>
 <section class="middle" id="middle-area">
-  <h1 class="middle" id="middle-header">Latest Items</h1>
-  <ul class="middle" id="items">  
-    {% for i in items %}
-      <li> <a href="{{ url_for('selectItem', category_name=i.name, item_name=i.Item.name) }}"> {{ i.Item.name }} </a></li>
-    {% endfor %}
-  </ul>
+<h1 class="middle" id="middle-header">Add New Category</h1>
+  <form id="edit-form" method="post" action="{{ url_for('newCategory') }}">
+    <input type="text" id="name" name="name" placeholder="Category Name">
+    <input type="submit" id="submit" value="Submit">
+  </form>
 </section>
 <section class="side" id="side-area">
   <h1><a href="{{ url_for('catalogMain') }}" class="item-catalog"><em>Item Catalog</em></a></h1>
@@ -25,7 +24,6 @@
     {% endfor %}
   </ul>
   {% if user %}
-  	<a href="{{ url_for('newCategory') }}" class="side" id="new-category">New Category</a>
     <a href="{{ url_for('logout') }}" class="side" id="login">Logout</a>
   {% else %}
     <a href="{{ url_for('login') }}" class="side" id="login">Login</a>

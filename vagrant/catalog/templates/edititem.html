@@ -9,12 +9,12 @@
 
 <body>
 <section class="middle" id="middle-area">
-  <h1 class="middle" id="middle-header">Latest Items</h1>
-  <ul class="middle" id="items">  
-    {% for i in items %}
-      <li> <a href="{{ url_for('selectItem', category_name=i.name, item_name=i.Item.name) }}"> {{ i.Item.name }} </a></li>
-    {% endfor %}
-  </ul>
+<h1 class="middle" id="middle-header">Edit {{ item.name }}</h1>
+  <form id="edit-form" method="post" action="{{ url_for('editItem', category_id=item.category_id, item_id=item.id, item_name=item.name) }}">
+    <input type="text" id="name" name="name" placeholder="Item Name" value="{{item.name}}">
+    <textarea type="text" id="description" name="description" placeholder="Description">{{item.description}}</textarea>
+    <input type="submit" id="submit" value="Submit">
+  </form>
 </section>
 <section class="side" id="side-area">
   <h1><a href="{{ url_for('catalogMain') }}" class="item-catalog"><em>Item Catalog</em></a></h1>

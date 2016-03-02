@@ -1,20 +1,34 @@
+<!doctype html>
 <html>
 <head>
-	<link rel=stylesheet type=text/css href="{{ url_for('static', filename='styles.css') }}">
-	</head>
+<meta charset="utf-8">
+<title>Item Catalog</title>
+<link rel=stylesheet type=text/css href="{{ url_for('static', filename='styles.css') }}">
+<link rel=stylesheet type=text/css href="../static/styles.css">
+</head>
+
 <body>
-<h1> Are you sure you want to delete {{item.name}}? </h1>
-
-<form action="{{ url_for('deleteMenuItem',restaurant_id = item.restaurant_id, menu_id=item.id)}}" method = 'post'>
-
-<input type='submit', value = 'Delete'>
-
-
-
-
-</form>
-
-<a href = '{{url_for('restaurantMenu', restaurant_id = item.restaurant_id)}}'> Cancel </a>
+<section class="middle" id="middle-area">
+<h1 class="middle" id="middle-header">Delete {{ item.name }}</h1>
+<div>Are you sure you want to permenantly delete {{ item.name }}?</div>
+<form id="edit-form" method="post" action="{{ url_for('deleteItem', category_id=item.category_id, item_id=item.id, item_name=item.name) }}">
+    <input type="submit" id="delete-confirmation" value="Delete">
+  </form>
+</section>
+<section class="side" id="side-area">
+  <h1><a href="{{ url_for('catalogMain') }}" class="item-catalog"><em>Item Catalog</em></a></h1>
+  <h3 class="side" id="category-header">Categories</h3>
+  <ul class="side" id="categories">
+    {% for c in categories %}
+      <li> <a href="{{ url_for('categoryItems', category_name=c.name) }}"> {{ c.name }} </a></li>
+    {% endfor %}
+  </ul>
+  {% if user %}
+  	<a href="{{ url_for('newCategory') }}" class="side" id="new-category">New Category</a>
+    <a href="{{ url_for('logout') }}" class="side" id="login">Logout</a>
+  {% else %}
+    <a href="{{ url_for('login') }}" class="side" id="login">Login</a>
+  {% endif %}
+</section>
 </body>
-
 </html>

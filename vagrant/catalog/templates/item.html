@@ -3,14 +3,18 @@
 <head>
 <meta charset="utf-8">
 <title>Item Catalog</title>
-<!--<link rel=stylesheet type=text/css href="{{ url_for('static', filename='styles.css') }}">-->
+<link rel=stylesheet type=text/css href="{{ url_for('static', filename='styles.css') }}">
 <link rel=stylesheet type=text/css href="../static/styles.css">
 </head>
 
 <body>
 <section class="middle" id="middle-area">
-  <h1 class="middle" id="middle-header">{{items.name}}</h1>
-  <p>{{ items.description }}</p>
+  <h1 class="middle" id="middle-header">{{ item.name }}</h1>
+  <p>{{ item.description }}</p>
+  {% if user %}
+    <a href="{{ url_for('editItem', category_id=item.category_id, item_id=item.id, item_name=item.name) }}" class="middle" id="edit-button">Edit</a>
+    <a href="{{ url_for('deleteItem', category_id=item.category_id, item_id=item.id, item_name=item.name) }}" class="middle" id="delete-button">Delete</a>
+  {% endif %}
 </section>
 <section class="side" id="side-area">
   <h1><a href="{{ url_for('catalogMain') }}" class="item-catalog"><em>Item Catalog</em></a></h1>
@@ -21,7 +25,8 @@
     {% endfor %}
   </ul>
   {% if user %}
-    <p class="side" id="login">You are {{ user.username }}</p>
+  	<a href="{{ url_for('newCategory') }}" class="side" id="new-category">New Category</a>
+    <a href="{{ url_for('logout') }}" class="side" id="login">Logout</a>
   {% else %}
     <a href="{{ url_for('login') }}" class="side" id="login">Login</a>
   {% endif %}

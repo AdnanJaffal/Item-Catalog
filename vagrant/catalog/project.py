@@ -1,4 +1,5 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, session
+from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import jsonify, session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from database_setup import Base, Category, Item, User
@@ -15,7 +16,7 @@ cursor = DBSession()
 def current_user():
     if 'id' in session:
         uid = session['id']
-        return cursor.query(User).filter_by(id=uid).one()
+        return cursor.query(User).filter_by(id=uid).first()
     return None
 
 @app.route('/categories/<int:category_id>/item/JSON')
@@ -35,91 +36,116 @@ def itemJSON(category_id, item_id):
 def catalogMain():
     if request.method == 'POST':
         username = request.form['username']
+        password = request.form['password']
         user = cursor.query(User).filter_by(username=username).first()
-        print user
-        if user:
+        if user and (user.password == password):
             session['id'] = user.id
+        else:
+            session['id'] = None
     else:
         user = current_user()
 
     categories = cursor.query(Category).all()
-    items = cursor.query(Item).order_by(Item.id).limit(10)
-    return render_template('catalog.html', items=items, categories=categories, user=user)
+    items = cursor.query(Item).order_by(Item.id.desc()).join(Category,
+        Item.category_id == Category.id).add_columns(Item.id, Item.name,
+                                                     Item.category_id,
+                                                     Category.name).limit(10)
+    return render_template('catalog.html', items=items, categories=categories,
+                           user=user)
 
 @app.route('/catalog/<string:category_name>')
 def categoryItems(category_name):
     categories = cursor.query(Category).all()
-    category = cursor.query(Category).filter_by(name=category_name).first()
-    print category
+    category = cursor.query(Category).filter_by(name=category_name).one()
     items = cursor.query(Item).filter_by(category_id=category.id)
     user = current_user()
-    return render_template('category.html', category=category, items=items, categories=categories, user=user)
+    return render_template('category.html', category=category, items=items,
+                           categories=categories, user=user)
 
-@app.route('/catalog/<int:category_id>/<string:item_name>')
-def loadItem(item_id, item_name, category_id):
-    print category_id
-    print item_id
-    print item_name
+@app.route('/catalog/<string:category_name>/<string:item_name>')
+def selectItem(category_name, item_name):
     categories = cursor.query(Category).all()
-    print categories
-    items = cursor.query(Item).filter_by(id=item_id)
-    print items
+    item = cursor.query(Item).filter_by(name=item_name).first()
     user = current_user()
-    print user
-    return render_template('item.html', items=items, categories=categories, user=user)
+    return render_template('item.html', categories=categories, item=item,
+                           user=user)
 
 @app.route('/catalog/login')
 def login():
     categories = cursor.query(Category).all()
     return render_template('login.html', categories=categories)
 
-# Task 1: Create route for newItem function here
+@app.route('/catalog/logout')
+def logout():
+    session['id'] = None
+    return redirect(url_for('catalogMain'))
 
-
-@app.route('/category/<int:category_id>/new/', methods=['GET', 'POST'])
-def newItem(category_id):
+@app.route('/catalog/<string:category_name>&<int:category_id>/new/',
+           methods=['GET', 'POST'])
+def newItem(category_name, category_id):
     if request.method == 'POST':
         newItem = Item(
-            name=request.form['name'], category_id=category_id)
+            name=request.form['name'], description=request.form['description'],
+            category_id=category_id)
         cursor.add(newItem)
         cursor.commit()
         flash("New item item created!")
-        return redirect(url_for('categoryMenu', category_id=category_id))
+        return redirect(url_for('categoryItems', category_name=category_name))
     else:
-        return render_template('newmenuitem.html', category_id=category_id)
+        category = cursor.query(Category).get(category_id)
+        categories = cursor.query(Category).all()
+        user = current_user()
+        return render_template('newitem.html', category=category,
+                               categories=categories, user=user)
 
-# Task 2: Create route for editItem function here
-
-
-@app.route('/categories/<int:category_id>/<int:item_id>/edit',
+@app.route('/catalog/NewCategory', methods=['GET', 'POST'])
+def newCategory():
+    if request.method == 'POST':
+        newCategory = Category(name=request.form['name'])
+        cursor.add(newCategory)
+        cursor.commit()
+        flash("New category created!")
+        return redirect(url_for('catalogMain'))
+    else:
+        categories = cursor.query(Category).all()
+        user = current_user()
+        return render_template('newcategory.html', categories=categories,
+                               user=user)
+    
+@app.route('/catalog/<int:category_id>/<int:item_id>/edit',
            methods=['GET', 'POST'])
 def editItem(category_id, item_id):
-    editedItem = cursor.query(Item).filter_by(id=item_id).one()
+    editedItem = cursor.query(Item).get(item_id)
     if request.method == 'POST':
+        category = cursor.query(Category).get(category_id)
         if request.form['name']:
             editedItem.name = request.form['name']
+            editedItem.description = request.form['description']
         cursor.add(editedItem)
         cursor.commit()
         flash("Menu item edited!")
-        return redirect(url_for('categoryMenu', category_id=category_id))
+        return redirect(url_for('categoryItems', category_name=category.name))
     else:
+        categories = cursor.query(Category).all()
+        user = current_user()
         return render_template(
-            'editmenuitem.html', category_id=category_id, item_id=item_id, item=editedItem)
+            'edititem.html', item=editedItem, categories=categories, user=user)
 
-# Task 3: Create a route for deleteItem function here
-
-
-@app.route('/categories/<int:category_id>/<int:item_id>/delete',
+@app.route('/catalog/<int:category_id>/<int:item_id>/delete',
            methods=['GET', 'POST'])
 def deleteItem(category_id, item_id):
-    itemToDelete = cursor.query(Item).filter_by(id=item_id).one()
+    itemToDelete = cursor.query(Item).get(item_id)
     if request.method == 'POST':
+        category = cursor.query(Category).get(category_id)
         cursor.delete(itemToDelete)
         cursor.commit()
-        flash("Menu item deleted!")
-        return redirect(url_for('categoryMenu', category_id=category_id))
+        flash("Item deleted!")
+        return redirect(url_for('categoryItems', category_name=category.name))
     else:
-        return render_template('deleteconfirmation.html', item=itemToDelete)
+        categories = cursor.query(Category).all()
+        user = current_user()
+        return render_template('deleteconfirmation.html', item=itemToDelete,
+                               categories=categories, user=user)
 
 
 if __name__ == '__main__':
