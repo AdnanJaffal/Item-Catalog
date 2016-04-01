@@ -19,16 +19,16 @@ def current_user():
         return cursor.query(User).filter_by(id=uid).first()
     return None
 
-@app.route('/categories/<int:category_id>/item/JSON')
-def categoryJSON(category_id):
-    category = cursor.query(Category).filter_by(id=category_id).one()
+@app.route('/categories/<string:category_name>/JSON')
+def categoryJSON(category_name):
+    category = cursor.query(Category).filter_by(name=category_name).one()
     items = cursor.query(Item).filter_by(
-        category_id=category_id).all()
+        category_id=category.id).all()
     return jsonify(Items=[i.serialize for i in items])
 
-@app.route('/categories/<int:category_id>/item/<int:item_id>/JSON')
-def itemJSON(category_id, item_id):
-    item = cursor.query(Item).filter_by(id=item_id).one()
+@app.route('/categories/<string:category_name>/<string:item_name>/JSON')
+def itemJSON(category_name, item_name):
+    item = cursor.query(Item).filter_by(name=item_name).one()
     return jsonify(Item=item.serialize)
 
 @app.route('/', methods=['GET', 'POST'])
@@ -65,10 +65,11 @@ def categoryItems(category_name):
 @app.route('/catalog/<string:category_name>/<string:item_name>')
 def selectItem(category_name, item_name):
     categories = cursor.query(Category).all()
+    category = cursor.query(Category).filter_by(name=category_name).first()
     item = cursor.query(Item).filter_by(name=item_name).first()
     user = current_user()
     return render_template('item.html', categories=categories, item=item,
-                           user=user)
+                           user=user, category=category)
 
 @app.route('/catalog/login')
 def login():
@@ -112,12 +113,12 @@ def newCategory():
         return render_template('newcategory.html', categories=categories,
                                user=user)
     
-@app.route('/catalog/<int:category_id>/<int:item_id>/edit',
+@app.route('/catalog/<string:category_name>/<string:item_name>/edit',
            methods=['GET', 'POST'])
-def editItem(category_id, item_id):
-    editedItem = cursor.query(Item).get(item_id)
+def editItem(category_name, item_name):
+    editedItem = cursor.query(Item).filter_by(name=item_name).first()
+    category = cursor.query(Category).filter_by(name=category_name).first()
     if request.method == 'POST':
-        category = cursor.query(Category).get(category_id)
         if request.form['name']:
             editedItem.name = request.form['name']
             editedItem.description = request.form['description']
@@ -129,14 +130,15 @@ def editItem(category_id, item_id):
         categories = cursor.query(Category).all()
         user = current_user()
         return render_template(
-            'edititem.html', item=editedItem, categories=categories, user=user)
+            'edititem.html', item=editedItem, category=category,
+            categories=categories, user=user)
 
-@app.route('/catalog/<int:category_id>/<int:item_id>/delete',
+@app.route('/catalog/<string:category_name>/<string:item_name>/delete',
            methods=['GET', 'POST'])
-def deleteItem(category_id, item_id):
-    itemToDelete = cursor.query(Item).get(item_id)
+def deleteItem(category_name, item_name):
+    itemToDelete = cursor.query(Item).filter_by(name=item_name).first()
+    category = cursor.query(Category).filter_by(name=category_name).first()
     if request.method == 'POST':
-        category = cursor.query(Category).get(category_id)
         cursor.delete(itemToDelete)
         cursor.commit()
         flash("Item deleted!")
@@ -144,10 +146,32 @@ def deleteItem(category_id, item_id):
     else:
         categories = cursor.query(Category).all()
         user = current_user()
-        return render_template('deleteconfirmation.html', item=itemToDelete,
+        return render_template('deleteitem.html', item=itemToDelete,
+                               categories=categories, user=user,
+                               category=category)
+    
+@app.route('/catalog/<string:category_name>/delete', methods=['GET', 'POST'])
+def deleteCategory(category_name):
+    category = cursor.query(Category).filter_by(name=category_name).first()
+    if request.method == 'POST':
+        itemsToDelete = cursor.query(
+            Item).filter_by(category_id=category.id).all()
+        cursor.delete(category)
+        cursor.commit()
+
+        for item in itemsToDelete:
+            cursor.delete(item)
+            cursor.commit()
+
+        flash("Category deleted!")
+        return redirect(url_for('catalogMain'))
+    else:
+        categories = cursor.query(Category).all()
+        user = current_user()
+        return render_template('deletecategory.html', category=category,
                                categories=categories, user=user)
 
-
+    
 if __name__ == '__main__':
     app.secret_key = 'super_secret_key'
     app.debug = True

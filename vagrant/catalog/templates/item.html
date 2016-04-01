@@ -12,8 +12,8 @@
   <h1 class="middle" id="middle-header">{{ item.name }}</h1>
   <p>{{ item.description }}</p>
   {% if user %}
-    <a href="{{ url_for('editItem', category_id=item.category_id, item_id=item.id, item_name=item.name) }}" class="middle" id="edit-button">Edit</a>
-    <a href="{{ url_for('deleteItem', category_id=item.category_id, item_id=item.id, item_name=item.name) }}" class="middle" id="delete-button">Delete</a>
+    <a href="{{ url_for('editItem', category_name=category.name, item_name=item.name) }}" class="middle" id="edit-button">Edit</a>
+    <a href="{{ url_for('deleteItem', category_name=category.name, item_name=item.name) }}" class="middle" id="delete-button">Delete</a>
   {% endif %}
 </section>
 <section class="side" id="side-area">

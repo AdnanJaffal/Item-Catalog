@@ -9,11 +9,10 @@
 
 <body>
 <section class="middle" id="middle-area">
-<h1 class="middle" id="middle-header">Edit {{ item.name }}</h1>
-  <form id="edit-form" method="post" action="{{ url_for('editItem', category_name=category.name, item_name=item.name) }}">
-    <input type="text" id="name" name="name" placeholder="Item Name" value="{{item.name}}">
-    <textarea type="text" id="description" name="description" placeholder="Description">{{item.description}}</textarea>
-    <input type="submit" id="submit" value="Submit">
+<h1 class="middle" id="middle-header">Delete {{ category.name }}</h1>
+<div>Are you sure you want to permenantly delete {{ category.name }}?</div>
+<form id="edit-form" method="post" action="{{ url_for('deleteCategory', category_name=category.name) }}">
+    <input type="submit" id="delete-confirmation" value="Delete">
   </form>
 </section>
 <section class="side" id="side-area">

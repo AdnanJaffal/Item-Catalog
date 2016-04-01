@@ -17,6 +17,7 @@
   </ul>
   {% if user %}
     <a href="{{ url_for('newItem', category_name=category.name, category_id=category.id) }}" class="middle" id="edit-button">New Item</a>
+    <a href="{{ url_for('deleteCategory', category_name=category.name) }}" class="middle" id="delete-category">Delete Category</a>
   {% endif %}
 </section>
 <section class="side" id="side-area">

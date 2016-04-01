@@ -11,7 +11,7 @@
 <section class="middle" id="middle-area">
 <h1 class="middle" id="middle-header">Delete {{ item.name }}</h1>
 <div>Are you sure you want to permenantly delete {{ item.name }}?</div>
-<form id="edit-form" method="post" action="{{ url_for('deleteItem', category_id=item.category_id, item_id=item.id, item_name=item.name) }}">
+<form id="edit-form" method="post" action="{{ url_for('deleteItem', category_name=category.name, item_name=item.name) }}">
     <input type="submit" id="delete-confirmation" value="Delete">
   </form>
 </section>

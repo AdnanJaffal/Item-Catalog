@@ -12,7 +12,7 @@
   <h1 class="middle" id="middle-header">Latest Items</h1>
   <ul class="middle" id="items">  
     {% for i in items %}
-      <li> <a href="{{ url_for('selectItem', category_name=i.name, item_name=i.Item.name) }}"> {{ i.Item.name }} </a></li>
+      <li> <a href="{{ url_for('selectItem', category_name=i.name, item_name=i.Item.name) }}"> {{ i.Item.name }} <i>({{ i.name }})</i></a></li>
     {% endfor %}
   </ul>
 </section>

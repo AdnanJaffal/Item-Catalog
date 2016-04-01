@@ -145,6 +145,17 @@ a               {text-decoration:none; color:#98A67B;}
 	left: 80px;
 	top: calc(100% - 52px);
 }
+#delete-category {
+	font: Baskerville, "Palatino Linotype", Palatino, "Century Schoolbook L", "Times New Roman", serif;
+	font-size: 24px;
+	color: #FFFFFF;
+	border: 1px solid #08109C;
+	background-color: #08109C;
+	padding: 5px;
+	position:absolute;
+	top:calc(100% - 50px);
+	left:calc(100% - 180px);
+}
 #delete-confirmation {
 	font: Baskerville, "Palatino Linotype", Palatino, "Century Schoolbook L", "Times New Roman", serif;
 	font-size: 24px;
