@@ -24,12 +24,8 @@
       <li> <a href="{{ url_for('categoryItems', category_name=c.name) }}"> {{ c.name }} </a></li>
     {% endfor %}
   </ul>
-  {% if user %}
-  	<a href="{{ url_for('newCategory') }}" class="side" id="new-category">New Category</a>
-    <a href="{{ url_for('logout') }}" class="side" id="login">Logout</a>
-  {% else %}
-    <a href="{{ url_for('login') }}" class="side" id="login">Login</a>
-  {% endif %}
+  <a href="{{ url_for('newCategory') }}" class="side" id="new-category">New Category</a>
+  <a href="{{ url_for('gdisconnect') }}" class="side" id="login">Logout</a>
 </section>
 </body>
 </html>

@@ -3,6 +3,8 @@
 <head>
 <meta charset="utf-8">
 <title>Item Catalog</title>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+<script src="//apis.google.com/js/platform.js?onload=start"></script>
 <link rel=stylesheet type=text/css href="{{ url_for('static', filename='styles.css') }}">
 <link rel=stylesheet type=text/css href="../static/styles.css">
 </head>
@@ -10,11 +12,47 @@
 <body>
 <section class="middle" id="middle-area">
 <h1 class="middle" id="middle-header">Login</h1>
-  <form id="login-form" method="post" action="{{ url_for('catalogMain') }}">
-    <input type="text" id="username" name="username" placeholder="Username">
-    <input type="password" id="password" name="password" placeholder="Password">
-    <input type="submit" value="Login">
-  </form>
+  <div id="signinButton">
+    <span class="g-signin" 
+	  data-scope="openid email"
+	  data-clientid="253914775889-7k0v55ohjo0hlt5vvtmp7ha51rdukjtv.apps.googleusercontent.com" 
+	  data-redirecturi="postmessage"
+	  data-accesstype="offline"
+	  data-cookiepolicy="single_host_origin"
+	  data-callback="signInCallback"
+	  data-approvalprompt="force">
+	</span>
+  </div>
+  <div id="result"></div>
+  <script>
+  function signInCallback(authResult) {    
+    if (authResult['code']) {
+      // Hide the sign-in button now that the user is authorized
+      $('#signinButton').attr('style', 'display: none');
+      // Send the one-time-use code to the server, if the server responds, write a 'login successful' message to the web page and then redirect back to the main restaurants page
+      $.ajax({
+        type: 'POST',
+        url: '/gconnect?state={{STATE}}',
+        processData: false,
+        data: authResult['code'],
+        contentType: 'application/octet-stream; charset=utf-8',
+        success: function(result) {
+          // Handle or verify the server response if necessary.
+          if (result) {
+            $('#result').html('Login Successful!</br>'+ result + '</br>Redirecting...')
+           setTimeout(function() {
+            window.location.href = "/catalog";
+           }, 4000);
+            
+        } else if (authResult['error']) {
+      console.log('There was an error: ' + authResult['error']);
+    } else {
+          $('#result').html('Failed to make a server-side call. Check your configuration and console.');
+           }
+        }
+      
+    }); } }
+  </script>
 </section>
 <section class="side" id="side-area">
   <h1><a href="{{ url_for('catalogMain') }}" class="item-catalog"><em>Item Catalog</em></a></h1>
