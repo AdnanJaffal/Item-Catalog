@@ -1,5 +1,5 @@
 # Item Catalog
-=====================
+
 
 ## Requirements
 * [Python 2.7.x or higher](https://www.python.org/downloads/)
